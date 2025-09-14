@@ -1,40 +1,313 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
-		<title>reveal.js</title>
+    <title>reveal.js</title>
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/dracula.css" />
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Slide 1 : Titre -->
+        <section>
+          <h1>Tests Unitaires en Rust</h1>
+          <p><small>Mohamed Terbaoui | IFT3913 | 19 Septembre 2025</small></p>
+          <small>Made with <a href="https://revealjs.com/">Reveal.js</a></small>
+        </section>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+        <!-- Slide 2 : Plan -->
+        <section>
+          <h3>Plan</h3>
+          <ol>
+            <li>Introduction : pourquoi les tests ?</li>
+            <li>Rust en bref</li>
+            <li>Les tests en Rust</li>
+            <li>Exemples de tests unitaires en Rust</li>
+            <li>Démo interactive</li>
+            <li>Point original</li>
+            <li>Réflexion</li>
+            <li>Conclusion & Sources</li>
+          </ol>
+        </section>
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+        <!-- Slide 3 : Importance des tests -->
+        <section>
+          <h3>1. Pourquoi les tests en Rust ?</h3>
+          <img
+            src="examples\assets\meme.png"
+            alt="funny-meme"
+            style="width: 400px"
+          />
+          <ul style="font-size: 1.7rem">
+            <li>
+              Rust offre la sécurité mémoire, mais les tests assurent la logique
+              métier
+            </li>
+            <li>
+              Assurer le fonctionnement correct des fonctions avec
+              <a href="https://doc.rust-lang.org/nomicon/ownership.html"
+                >ownership et lifetimes</a
+              >
+            </li>
+            <li>
+              Vérifier le comportement des fonctions qui utilisent des threads
+              ou async
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <!-- Slide 4 : Rust en bref -->
+          <section>
+            <h3>2. Rust en bref</h3>
+            <ul>
+              <li>Créé en 2010 chez <b>Mozilla</b></li>
+              <li>Sécurité mémoire <b>sans garbage collector</b></li>
+              <li>Performance proche de C/C++</li>
+              <li>Utilisations : systèmes, Web, blockchain</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Points forts de Rust</h3>
+            <ul>
+              <li>🛡️ Sécurité mémoire (ownership, borrow checker)</li>
+              <li>⚡ Performance bas niveau</li>
+              <li>🔀 Concurrence sûre</li>
+            </ul>
+          </section>
+        </section>
+
+        <!--Slide 5 : Tests unitaires en rust -->
+
+        <section>
+          <section>
+            <h3>3. Les Tests unitaires en Rust</h3>
+
+            <p>
+              Les tests en Rust sont très simples à implémenter car ils sont
+              <b>inclus par défaut</b> dans le gestionnaire de paquets
+              <code>cargo</code>.
+            </p>
+
+            <ul>
+              <li>Pas besoin d’installer un framework externe</li>
+              <li>Un test = une fonction annotée avec <code>#[test]</code></li>
+              <li>Exécution avec la commande <code>cargo test</code></li>
+              <li>
+                En général, les tests unitaires se trouvent dans le même fichier
+                que le code.
+              </li>
+            </ul>
+          </section>
+          <section data-auto-animate>
+            <h3 data-id="code-title">
+              Syntaxe d'un test unitaire simple en RUST
+            </h3>
+            <pre
+              data-id="code-animation"
+            ><code class="language-rust" data-trim data-line-numbers="|1-4|6-10"><script type="text/template">
+    // Fonction à tester
+    fn add(a: i32, b: i32) -> i32 {
+        a + b
+    }
+
+    // Test unitaire de la fonction
+    #[test]
+    fn test_add() {
+        assert_eq!(add(2, 2), 4); // Vérifie que 2+2 = 4
+    }
+					</script></code></pre>
+            <p>
+              <i> Cargo compile et exécute automatiquement tous les tests.</i>
+            </p>
+          </section>
+          <section>
+            Pour tester un seul test avec cargo :
+            <pre><code class="language-rust">
+          cargo test Nom_du_test
+            </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>4. Exemples de tests unitaires en Rust</h3>
+            <ul>
+              <li>
+                Tests classiques avec <code>assert_eq!</code> et
+                <code>assert!</code>
+              </li>
+              <li>
+                Tests qui doivent échouer avec <code>#[should_panic]</code>
+              </li>
+              <li>Tests avec messages d’erreur personnalisés</li>
+              <li>
+                Organisation avec <code>#[cfg(test)] mod tests { ... }</code>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Exemple : Test d’échec attendu</h3>
+            <pre><code class="language-rust">
+    // Fonction qui panique si n == 0
+    fn divide(a: i32, b: i32) -> i32 {
+        if b == 0 {
+            panic!("Division par zéro !");
+        }
+        a / b
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        #[should_panic(expected = "Division par zéro")]
+        fn test_divide_by_zero() {
+            divide(10, 0);
+        }
+    }
+  </code></pre>
+            <div
+              style="
+                background: #424f5c;
+                color: white;
+                padding: 10px;
+                border-radius: 8px;
+                margin-top: 10px;
+                font-size: 0.7em;
+              "
+            >
+              💡 <b>Note :</b> En Rust, <code>panic!</code> stoppe immédiatement
+              l’exécution du programme. On l’utilise pour signaler des erreurs
+              irréparables (ex. division par zéro).
+            </div>
+          </section>
+
+          <section>
+            <h3>Exemple : Messages personnalisés</h3>
+            <pre><code class="language-rust">
+    fn is_even(n: i32) -> bool {
+        n % 2 == 0
+    }
+
+    #[test]
+    fn test_is_even() {
+        let value = 3;
+        assert!(is_even(value), "{} n'est pas pair !", value);
+    }
+  </code></pre>
+            <p style="color: gray; font-size: 0.9em">
+              Les messages personnalisés rendent les erreurs plus claires : ici,
+              on sait quel nombre a échoué au test.
+            </p>
+          </section>
+        </section>
+
+        <!-- Slide 7 : Démo interactive -->
+        <section>
+          <h3>5. Démo interactive</h3>
+          <p>Exécution des tests dans le Rust Playground :</p>
+          <iframe
+            src="https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&code=fn%20add(a%3A%20i32%2C%20b%3A%20i32)%20-%3E%20i32%20%7B%0A%20%20%20%20a%20%2B%20b%0A%7D%0A%0A%23%5Btest%5D%0Afn%20test_add()%20%7B%0A%20%20%20%20assert_eq!(add(2%2C%202)%2C%204)%3B%0A%7D"
+            width="100%"
+            height="400px"
+          >
+          </iframe>
+          <p><i>Cliquez sur "Run" pour lancer le test</i></p>
+        </section>
+
+        <!-- Slide 8 : Point original -->
+        <section>
+          <h3>6. Quelques concepts propres à RUST</h3>
+          <ul>
+            <li>
+              Rust permet des <b>tests de panique</b> → valider les erreurs
+              attendues
+            </li>
+            <li>
+              Outils externes : <code>cargo tarpaulin</code> pour la couverture
+            </li>
+            <li>Benchmarking avec <code>criterion</code></li>
+          </ul>
+        </section>
+
+        <!-- Slide 9 : Réflexion -->
+        <section>
+          <h3>7. Réflexion</h3>
+          <p>
+            🔹 Java → JUnit (framework externe)<br />
+            🔹 Python → PyTest / Unittest (externes)<br />
+            🔹 Rust → tests intégrés avec Cargo → <b>plus simple et robuste</b>
+          </p>
+          <p>
+            <i
+              >Rust combine sécurité mémoire et tests intégrés pour une qualité
+              logicielle élevée</i
+            >
+          </p>
+        </section>
+
+        <!-- Slide 10 : Conclusion -->
+        <section>
+          <h3>8. Conclusion</h3>
+          <p style="font-size: 1em; text-align: center">
+            Tester dans Rust est <b>simple</b>, <b>rapide</b> et
+            <b>pratique</b> grâce à des <b>assertions avancées</b> intégrées. Un
+            outil essentiel pour garantir la <b>qualité logicielle</b>.
+          </p>
+          <h3>Sources</h3>
+
+          <ul>
+            <li><a href="https://doc.rust-lang.org/cargo/">Cargo Book</a></li>
+            <li>
+              <a href="https://doc.rust-lang.org/rust-by-example/testing.html"
+                >Rust by Example – Testing</a
+              >
+            </li>
+            <li>
+              <a href="https://foundation.rust-lang.org/">Rust Foundation</a>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Questions -->
+        <section>
+          <h1>Des questions*?</h1>
+          <h6 style="font-size: 1rem; color: white">
+            *(Sauf si c’est sur le borrow checker 🦀)
+          </h6>
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
 </html>
