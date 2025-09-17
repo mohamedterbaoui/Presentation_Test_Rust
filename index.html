@@ -215,6 +215,115 @@
               on sait quel nombre a échoué au test.
             </p>
           </section>
+          <section>
+            <h3>Tests avec Result&lt;T, E&gt; et gestion d'erreurs</h3>
+            <pre><code class="language-rust">     
+    use std::fs::File;
+    use std::io::Error;
+
+    fn read_file_size(path: &str) -> Result&lt;u64, Error&gt; {
+        let file = File::open(path)?;
+        Ok(file.metadata()?.len())
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        
+        #[test]
+        fn test_file_exists() -> Result&lt;(), Error&gt; {
+            // Test qui retourne un Result
+            let size = read_file_size("Cargo.toml")?;
+            assert!(size > 0);
+            Ok(())
+        }
+        
+        #[test]
+        fn test_file_not_found() {
+            let result = read_file_size("fichier_inexistant.txt");
+            assert!(result.is_err());
+        }
+    }
+
+  </code></pre>
+            <p style="color: gray; font-size: 0.5em">
+              test_file_exists() : Ce test vérifie qu'un fichier existant
+              (Cargo.toml) peut être lu et a une taille > 0. Le test réussit si
+              le fichier existe et peut être lu, échoue si le fichier n'existe
+              pas ou est inaccessible. test_file_not_found() : Ce test vérifie
+              que la fonction retourne bien une erreur quand on essaie de lire
+              un fichier inexistant. Le test réussit si result.is_err() est
+              vrai, confirmant que la gestion d'erreur fonctionne correctement.
+            </p>
+          </section>
+
+          <section>
+            <h3>Tests ignorés et conditionnels</h3>
+            <pre><code class="language-rust">     
+    #[test]
+    #[ignore = "Test lent, à exécuter manuellement"]
+    fn test_performance_long() {
+        std::thread::sleep(std::time::Duration::from_secs(5));
+        assert_eq!(2 + 2, 4);
+    }
+
+    #[test]
+    #[cfg(target_os = "linux")]
+    fn test_linux_only() {
+        // Ce test ne s'exécute que sur Linux
+        assert!(std::path::Path::new("/proc").exists());
+    }
+
+  </code></pre>
+            <p style="color: gray; font-size: 0.5em">
+              test_performance_long() : Ce test simule un processus long (5
+              secondes) mais est ignoré par défaut pour ne pas ralentir les
+              tests réguliers. Il faut l'exécuter manuellement avec cargo test
+              -- --ignored quand on veut tester les performances.
+              test_linux_only() : Ce test ne s'exécute que sur les systèmes
+              Linux et vérifie l'existence du dossier /proc. Il sera ignoré
+              automatiquement sur Windows/macOS, permettant d'avoir du code
+              spécifique à certaines plateformes.
+            </p>
+          </section>
+
+          <section>
+            <h3>Tests paramétrés avec macros</h3>
+            <pre><code class="language-rust">     
+    fn is_prime(n: u32) -> bool {
+        if n &lt; 2 { return false; }
+        for i in 2..=(n as f64).sqrt() as u32 {
+            if n % i == 0 { return false; }
+        }
+        true
+    }
+
+    macro_rules! test_primes {
+        ($($name:ident: $value:expr,)*) => {
+            $(
+                #[test]
+                fn $name() {
+                    let (input, expected) = $value;
+                    assert_eq!(is_prime(input), expected);
+                }
+            )*
+        }
+    }
+
+    test_primes! {
+        test_2_is_prime: (2, true),
+        test_4_not_prime: (4, false),
+        test_17_is_prime: (17, true),
+    }
+
+  </code></pre>
+            <p style="color: gray; font-size: 0.5em">
+              test_primes (macro) : Cette macro génère automatiquement plusieurs
+              tests pour vérifier si différents nombres sont premiers ou non.
+              Elle évite la répétition de code en créant des tests
+              test_2_is_prime, test_4_not_prime, etc. avec le même pattern.
+            </p>
+          </section>
         </section>
 
         <!-- Slide 7 : Démo interactive -->
